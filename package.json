@@ -1,0 +1,41 @@
+{
+  "name": "personal-website",
+  "version": "1.0.0",
+  "description": "Tyler Lindberg's personal website",
+  "scripts": {
+    "prepare": "husky install",
+    "build": "webpack --mode production",
+    "start": "webpack serve --open",
+    "lint": "eslint ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TyLindberg/personal-website.git"
+  },
+  "author": "Tyler Lindberg",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/TyLindberg/personal-website/issues"
+  },
+  "homepage": "https://github.com/TyLindberg/personal-website#readme",
+  "private": true,
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^4.28.0",
+    "@typescript-eslint/parser": "^4.28.0",
+    "eslint": "^7.29.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^3.4.0",
+    "html-webpack-plugin": "^5.3.2",
+    "husky": "^6.0.0",
+    "lint-staged": "^11.0.0",
+    "prettier": "^2.3.2",
+    "ts-loader": "^9.2.3",
+    "typescript": "^4.3.4",
+    "webpack": "^5.40.0",
+    "webpack-cli": "^4.7.2",
+    "webpack-dev-server": "^3.11.2"
+  },
+  "lint-staged": {
+    "*.(j|t)s": "eslint --cache --fix"
+  }
+}
