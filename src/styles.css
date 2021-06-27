@@ -1,0 +1,45 @@
+body {
+  background-color: darkcyan;
+  color: white;
+  font-family: Poppins, sans-serif;
+  margin: 0;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+#name-title {
+  font-weight: 200;
+  line-height: 1;
+  position: fixed;
+  margin: 0;
+  top: 20px;
+  right: 20px;
+}
+
+#link-tray {
+  display: flex;
+  flex-direction: row;
+  justify-content: left;
+  position: fixed;
+  height: 50px;
+  width: 100%;
+  left: 0;
+  bottom: 0;
+  padding: 20px 20px;
+}
+
+.link {
+  margin-right: 10px;
+  height: 100%;
+}
+
+.link-icon {
+  height: 100%;
+}
+
+#about-me-content {
+  display: none;
+}
