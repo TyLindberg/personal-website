@@ -42,5 +42,8 @@
   },
   "lint-staged": {
     "*.(j|t)s": "eslint --cache --fix"
+  },
+  "dependencies": {
+    "gl-matrix": "^3.3.0"
   }
 }
