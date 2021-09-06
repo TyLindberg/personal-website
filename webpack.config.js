@@ -14,6 +14,11 @@ module.exports = (_, options) => {
         { test: /\.html$/, use: 'html-loader' },
         { test: /\.css$/i, use: [MiniCssExtractPlugin.loader, 'css-loader'] },
         { test: /\.(png|svg|jpg|jpeg|gif)$/i, type: 'asset/resource' },
+        {
+          test: /\.(glsl|vs|fs|vert|frag)$/i,
+          exclude: /node_modules/,
+          use: ['raw-loader', 'glslify-loader'],
+        },
       ],
     },
     output: {
