@@ -1,10 +1,12 @@
 import { GLContext, SimpleModel } from '../types';
 import vertexShaderSource from './shaders/vert.glsl';
 import fragmentShaderSource from './shaders/frag.glsl';
+import { PerspectiveCamera } from './camera';
+import { mat4, ReadonlyMat4 } from 'gl-matrix';
 
 interface ProgramInfo {
   attributeLocations: { [key: string]: GLint };
-  uniformLocations: { [key: string]: GLint };
+  uniformLocations: { [key: string]: WebGLUniformLocation };
 }
 
 // TODO: Handle device pixel ratio (turn off antialiasing potentially)
@@ -12,12 +14,16 @@ interface ProgramInfo {
 export class WebGLContext implements GLContext<SimpleModel> {
   private gl: WebGLRenderingContext;
   private programInfo: ProgramInfo;
-  private shouldRender = false;
+  private renderLoopActive = false;
   private isSceneDirty = false; // TODO: Find a way to make this easier to track
+  private previousViewProjectionMatrix: ReadonlyMat4 = mat4.create();
 
   private count: GLsizei = 0; // TODO: Remove this
 
-  constructor(private readonly canvas: HTMLCanvasElement) {
+  constructor(
+    private readonly canvas: HTMLCanvasElement,
+    private readonly camera: PerspectiveCamera
+  ) {
     this.canvas.width = this.canvas.clientWidth;
     this.canvas.height = this.canvas.clientHeight;
     const gl = (this.gl =
@@ -27,6 +33,7 @@ export class WebGLContext implements GLContext<SimpleModel> {
       throw new Error('WEBGL_CONTEXT_INIT_FAILURE');
     }
     this.glInit(gl);
+    this.resize();
     window.addEventListener('resize', this.resize);
 
     this.programInfo = this.setupProgram();
@@ -52,21 +59,13 @@ export class WebGLContext implements GLContext<SimpleModel> {
     return true;
   }
 
-  async changeModel(key: string): Promise<boolean> {
+  async changeModel(key: string, transitionDuration: number): Promise<boolean> {
     return true;
   }
 
   startRenderLoop(): void {
-    this.shouldRender = true;
+    this.renderLoopActive = true;
   }
-
-  // get cameraController() {
-  //   return {
-  //     autoRotate: false,
-  //     getCoordinates: () => {},
-  //     transitionCamera: () => {},
-  //   };
-  // }
 
   private glInit = (gl: WebGLRenderingContext) => {
     gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
@@ -78,14 +77,32 @@ export class WebGLContext implements GLContext<SimpleModel> {
   };
 
   private startInternalRenderLoop = () => {
-    const { gl } = this;
+    const { gl, programInfo } = this;
     const renderFrame = () => {
-      if (this.shouldRender && this.isSceneDirty) {
+      // Check if camera has moved
+      const viewProjectionMatrix = mat4.clone(
+        this.camera.getViewProjectionMatrix()
+      );
+      const isCameraDirty = !mat4.equals(
+        this.previousViewProjectionMatrix,
+        viewProjectionMatrix
+      );
+      this.previousViewProjectionMatrix = viewProjectionMatrix;
+
+      if (this.renderLoopActive && (this.isSceneDirty || isCameraDirty)) {
+        this.isSceneDirty = false;
+        if (isCameraDirty) {
+          gl.uniformMatrix4fv(
+            programInfo.uniformLocations.viewProjectionMatrix,
+            false,
+            viewProjectionMatrix // WebGL call doesn't enforce readonly for some reason
+          );
+        }
+
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         if (this.count) {
           gl.drawArrays(gl.TRIANGLES, 0, this.count);
         }
-        this.isSceneDirty = false;
       }
       requestAnimationFrame(renderFrame);
     };
@@ -97,6 +114,7 @@ export class WebGLContext implements GLContext<SimpleModel> {
     canvas.width = canvas.clientWidth;
     canvas.height = canvas.clientHeight;
     gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
+    this.camera.aspect = canvas.clientWidth / canvas.clientHeight;
     this.isSceneDirty = true;
   };
 
@@ -149,11 +167,26 @@ export class WebGLContext implements GLContext<SimpleModel> {
     gl.useProgram(program);
 
     // Get attribute locations
-    return {
+    const programInfo = {
       attributeLocations: {
         position: gl.getAttribLocation(program, 'position'),
       },
-      uniformLocations: {},
+      uniformLocations: {
+        viewProjectionMatrix: gl.getUniformLocation(
+          program,
+          'viewProjectionMatrix'
+        ),
+      },
     };
+    // Confirm all uniforms are found
+    // TODO: See if there's a way to do this for attributes as well
+    Object.entries(programInfo.uniformLocations).forEach(
+      ([uniformName, uniformLocation]) => {
+        if (uniformLocation == null) {
+          throw new Error(`Failed to find uniform location: ${uniformName}`);
+        }
+      }
+    );
+    return programInfo as ProgramInfo;
   }
 }

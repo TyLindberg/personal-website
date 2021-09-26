@@ -1,8 +1,9 @@
+import { mat4, ReadonlyMat4 } from 'gl-matrix';
+
 export interface GLContext<Model> {
   loadModel(key: string, model: Model): Promise<boolean>;
   changeModel(key: string, transitionDuration: number): Promise<boolean>;
   startRenderLoop(): void;
-  // get cameraController(): CameraController;
 }
 
 export interface ModelLoader<Model> {
@@ -16,8 +17,9 @@ export interface SimpleModel {
   normals: Float32Array;
 }
 
+// TODO: Add on move events to let top level know user is interacting
 export interface CameraController {
-  autoRotate: boolean;
+  autoRotateSpeed: number;
   getCoordinates(): SphericalCoordinates;
   transitionToCoordinates(
     coords: SphericalCoordinates,
@@ -26,8 +28,30 @@ export interface CameraController {
   ): Promise<void>;
 }
 
+export interface ReadOnlyCameraController {
+  get fov(): number;
+  getCoordinates(): SphericalCoordinates;
+  getViewProjectionMatrix(): mat4;
+}
+
+export interface Camera {
+  fov: number;
+  aspect: number;
+  near: number;
+  far: number;
+  getCoordinates(): SphericalCoordinates;
+  setCoordinates(coords: SphericalCoordinates): void;
+  getViewProjectionMatrix(): ReadonlyMat4;
+}
+
 export interface SphericalCoordinates {
   radius: number;
   theta: number;
   phi: number;
+}
+
+export interface CartesianCoordinates {
+  x: number;
+  y: number;
+  z: number;
 }
