@@ -1,4 +1,4 @@
-import { mat4, ReadonlyMat4 } from 'gl-matrix';
+import { ReadonlyMat4 } from 'gl-matrix';
 
 export interface GLContext<Model> {
   loadModel(key: string, model: Model): Promise<boolean>;
