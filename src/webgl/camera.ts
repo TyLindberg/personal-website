@@ -102,7 +102,7 @@ export class PerspectiveCamera implements Camera {
           cartesianCoordinates.z,
         ],
         [0, 0, 0],
-        [0, -1, 0]
+        [0, 1, 0]
       );
       this.isViewMatrixDirty = false;
     }
@@ -112,7 +112,7 @@ export class PerspectiveCamera implements Camera {
 
       mat4.perspective(
         this.projectionMatrix,
-        this._fov,
+        (this._fov * Math.PI) / 180,
         this._aspect,
         this._near,
         this._far

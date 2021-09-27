@@ -95,7 +95,7 @@ export class WebGLContext implements GLContext<SimpleModel> {
           gl.uniformMatrix4fv(
             programInfo.uniformLocations.viewProjectionMatrix,
             false,
-            viewProjectionMatrix // WebGL call doesn't enforce readonly for some reason
+            viewProjectionMatrix
           );
         }
 

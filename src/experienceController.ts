@@ -17,6 +17,11 @@ export class ExperienceController {
   }
 
   start(): void {
+    setInterval(() => {
+      const coords = this.cameraController.getCoordinates();
+      coords.phi += 0.01;
+      this.cameraController.setCoordinates(coords);
+    }, 0.1);
     this.context.startRenderLoop();
   }
 }

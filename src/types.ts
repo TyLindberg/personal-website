@@ -21,6 +21,7 @@ export interface SimpleModel {
 export interface CameraController {
   autoRotateSpeed: number;
   getCoordinates(): SphericalCoordinates;
+  setCoordinates(coords: SphericalCoordinates): void;
   transitionToCoordinates(
     coords: SphericalCoordinates,
     transitionDuration: number,

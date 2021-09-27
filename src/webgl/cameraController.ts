@@ -22,6 +22,10 @@ export class WebGLCameraController implements CameraController {
     return this.camera.getCoordinates();
   }
 
+  setCoordinates(coords: SphericalCoordinates): void {
+    this.camera.setCoordinates(coords);
+  }
+
   async transitionToCoordinates(
     coords: SphericalCoordinates,
     transitionDuration: number,
