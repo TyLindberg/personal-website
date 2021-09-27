@@ -29,14 +29,7 @@ export interface CameraController {
   ): Promise<void>;
 }
 
-export interface ReadOnlyCameraController {
-  get fov(): number;
-  getCoordinates(): SphericalCoordinates;
-  getViewProjectionMatrix(): mat4;
-}
-
 export interface Camera {
-  fov: number;
   aspect: number;
   near: number;
   far: number;

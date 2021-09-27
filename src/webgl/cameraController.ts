@@ -1,7 +1,6 @@
 import { Camera, CameraController, SphericalCoordinates } from '../types';
 
 interface WebGLCameraSettings {
-  fov?: number;
   autoRotateSpeed?: number;
 }
 
