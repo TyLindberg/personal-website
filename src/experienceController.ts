@@ -19,9 +19,9 @@ export class ExperienceController {
   start(): void {
     setInterval(() => {
       const coords = this.cameraController.getCoordinates();
-      coords.phi += 0.01;
+      coords.phi += 0.1;
       this.cameraController.setCoordinates(coords);
-    }, 0.1);
+    }, 100);
     this.context.startRenderLoop();
   }
 }
