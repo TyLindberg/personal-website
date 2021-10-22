@@ -9,7 +9,6 @@ export class WebGLCameraController implements CameraController {
 
   constructor(
     private readonly camera: Camera,
-    private readonly canvas: HTMLCanvasElement,
     startingPosition: SphericalCoordinates,
     { autoRotateSpeed = 0 }: WebGLCameraSettings = {}
   ) {
