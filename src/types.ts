@@ -13,8 +13,7 @@ export interface ModelLoader<Model> {
 }
 
 export interface SimpleModel {
-  triangles: Float32Array;
-  normals: Float32Array;
+  points: Float32Array;
 }
 
 // TODO: Add on move events to let top level know user is interacting

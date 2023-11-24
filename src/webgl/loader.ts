@@ -904,5 +904,5 @@ const geomArray = new Float32Array([
 ]);
 
 const modelMap: { [key: string]: SimpleModel } = {
-  bunny: { triangles: geomArray, normals: geomArray },
+  bunny: { points: geomArray },
 };

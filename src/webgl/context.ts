@@ -44,7 +44,7 @@ export class WebGLContext implements GLContext<SimpleModel> {
     const { gl, programInfo } = this;
     const positionBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, model.triangles, gl.STATIC_DRAW);
+    gl.bufferData(gl.ARRAY_BUFFER, model.points, gl.STATIC_DRAW);
     gl.vertexAttribPointer(
       programInfo.attributeLocations.position,
       3,
@@ -54,7 +54,7 @@ export class WebGLContext implements GLContext<SimpleModel> {
       0
     );
     gl.enableVertexAttribArray(programInfo.attributeLocations.position);
-    this.count = model.triangles.length / 3;
+    this.count = model.points.length / 3;
     this.isSceneDirty = true;
     return true;
   }
@@ -101,7 +101,7 @@ export class WebGLContext implements GLContext<SimpleModel> {
 
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         if (this.count) {
-          gl.drawArrays(gl.TRIANGLES, 0, this.count);
+          gl.drawArrays(gl.LINES, 0, this.count);
         }
       }
       requestAnimationFrame(renderFrame);
