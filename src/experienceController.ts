@@ -1,4 +1,5 @@
 import { CameraController, GLContext, ModelLoader, SimpleModel } from './types';
+import { now } from './utils/timeUtils';
 
 export class ExperienceController {
   constructor(
@@ -17,11 +18,19 @@ export class ExperienceController {
   }
 
   start(): void {
-    setInterval(() => {
+    let prevTime = now();
+    const animationCallback = () => {
+      const currentTime = now();
+      const deltaTime = currentTime - prevTime;
+      prevTime = currentTime;
+
       const coords = this.cameraController.getCoordinates();
-      coords.phi += 0.1;
+      coords.phi = (coords.phi + 0.0005 * deltaTime) % (2 * Math.PI);
       this.cameraController.setCoordinates(coords);
-    }, 100);
+      requestAnimationFrame(animationCallback);
+    };
+    requestAnimationFrame(animationCallback);
+
     this.context.startRenderLoop();
   }
 }
