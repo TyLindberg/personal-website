@@ -12,8 +12,8 @@ if (!canvas || !(canvas instanceof HTMLCanvasElement)) {
 
 const camera = new PerspectiveCamera();
 const cameraController = new WebGLCameraController(camera, {
-  phi: -Math.PI / 2,
-  theta: Math.PI / 2,
+  phi: Math.PI / 2,
+  theta: Math.PI / 2.5,
   radius: 2,
 });
 const context = new WebGLContext(canvas, camera);
