@@ -5,7 +5,7 @@ import { WebGLLoader } from './webgl/loader';
 import { PerspectiveCamera } from './webgl/camera';
 import { WebGLCameraController } from './webgl/cameraController';
 
-const canvas = document.getElementById('main-canvas');
+const canvas = document.querySelector('canvas');
 if (!canvas || !(canvas instanceof HTMLCanvasElement)) {
   throw new Error('Failed to find HTML canvas!');
 }

@@ -27,7 +27,7 @@ header {
   margin: 0px 20px;
 }
 
-#name-title {
+header h1 {
   line-height: 1;
 }
 
@@ -37,17 +37,17 @@ nav {
   justify-content: right;
 }
 
-.nav-anchor {
+nav a {
   text-decoration: none;
   color: white;
-  margin-left: 40px;
-}
-
-.nav-text {
   line-height: 1;
+  margin-left: 40px;
+  margin-top: 21.44px;
+  font-size: 32px;
 }
 
-#main-canvas {
+
+canvas {
   position: fixed;
   top: 0;
   left: 0;
