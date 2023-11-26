@@ -29,6 +29,7 @@ export class WebGLContext implements GLContext<SimpleModel> {
     this.canvas.width = this.canvas.clientWidth;
     this.canvas.height = this.canvas.clientHeight;
     this.initialCameraFov = camera.fov;
+
     const gl = (this.gl =
       canvas.getContext('webgl') ??
       (canvas.getContext('experimental-webgl') as WebGLRenderingContext));
@@ -36,8 +37,10 @@ export class WebGLContext implements GLContext<SimpleModel> {
       throw new Error('WEBGL_CONTEXT_INIT_FAILURE');
     }
     this.glInit(gl);
-    this.resize();
-    window.addEventListener('resize', this.resize);
+
+    // Handle resizing with observer to account for device pixel ratio nuances
+    const observer = new ResizeObserver(this.resize.bind(this));
+    observer.observe(canvas);
 
     this.programInfo = this.setupProgram();
     this.startInternalRenderLoop();
@@ -112,11 +115,29 @@ export class WebGLContext implements GLContext<SimpleModel> {
     requestAnimationFrame(renderFrame);
   };
 
-  private resize = () => {
+  private resize = (entries: ResizeObserverEntry[]) => {
+    const [entry] = entries;
     const { canvas, gl } = this;
-    canvas.width = canvas.clientWidth;
-    canvas.height = canvas.clientHeight;
+
+    // Referenced from Khronos wiki: https://www.khronos.org/webgl/wiki/HandlingHighDPI
+    let width: number;
+    let height: number;
+    if (entry.devicePixelContentBoxSize) {
+      width = entry.devicePixelContentBoxSize[0].inlineSize;
+      height = entry.devicePixelContentBoxSize[0].blockSize;
+    } else if (entry.contentBoxSize) {
+      // fallback for Safari that will not always be correct
+      width = Math.round(entry.contentBoxSize[0].inlineSize * devicePixelRatio);
+      height = Math.round(entry.contentBoxSize[0].blockSize * devicePixelRatio);
+    } else {
+      width = Math.round(canvas.clientWidth * window.devicePixelRatio);
+      height = Math.round(canvas.clientHeight * window.devicePixelRatio);
+    }
+
+    canvas.width = width;
+    canvas.height = height;
     gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
+
     this.camera.aspect = canvas.clientWidth / canvas.clientHeight;
     if (this.camera.aspect < 1) {
       // For mobile screens we need to adjust the FOV as well
@@ -126,6 +147,7 @@ export class WebGLContext implements GLContext<SimpleModel> {
     } else {
       this.camera.fov = this.initialCameraFov;
     }
+
     this.isSceneDirty = true;
   };
 
