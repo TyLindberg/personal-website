@@ -4,13 +4,17 @@ import { WebGLContext } from './webgl/context';
 import { WebGLLoader } from './webgl/loader';
 import { PerspectiveCamera } from './webgl/camera';
 import { WebGLCameraController } from './webgl/cameraController';
+import { resizeCanvas } from './utils/canvasResizer';
 
 const canvas = document.querySelector('canvas');
 if (!canvas || !(canvas instanceof HTMLCanvasElement)) {
   throw new Error('Failed to find HTML canvas!');
 }
 
-const camera = new PerspectiveCamera([0, 0.2, 0]);
+window.addEventListener('resize', () => resizeCanvas(canvas));
+resizeCanvas(canvas);
+
+const camera = new PerspectiveCamera([0, 0.05, 0]);
 const cameraController = new WebGLCameraController(camera, {
   phi: Math.PI / 2,
   theta: Math.PI / 2.5,
