@@ -23,5 +23,4 @@ const experienceController = new ExperienceController(
   loader,
   cameraController
 );
-experienceController.loadFirstModel();
-experienceController.start();
+experienceController.loadFirstModel().then(() => experienceController.start());
