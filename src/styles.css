@@ -9,6 +9,8 @@
 }
 
 body {
+  display: flex;
+  flex-direction: column;
   background-color: black;
   color: white;
   font-family: "Press Start 2P", sans-serif;
@@ -47,11 +49,10 @@ nav a {
 }
 
 canvas {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
   z-index: -1;
+  width: 100%;
+  flex: 1;
+  min-height: 0;
 }
 
 @media only screen and (max-width: 900px) {
