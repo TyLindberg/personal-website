@@ -1,6 +1,7 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 
 module.exports = (_, options) => {
   const mode = options.mode || 'development';
@@ -14,6 +15,7 @@ module.exports = (_, options) => {
         { test: /\.html$/, use: 'html-loader' },
         { test: /\.css$/i, use: [MiniCssExtractPlugin.loader, 'css-loader'] },
         { test: /\.(png|svg|jpg|jpeg|gif)$/i, type: 'asset/resource' },
+        { test: /\.(woff|woff2|eot|ttf|otf)$/i, type: 'asset/resource' },
         {
           test: /\.(glsl|vs|fs|vert|frag)$/i,
           exclude: /node_modules/,
@@ -21,7 +23,10 @@ module.exports = (_, options) => {
         },
       ],
     },
-    optimization: { usedExports: true },
+    optimization: {
+      usedExports: true,
+      minimizer: [`...`, new CssMinimizerPlugin()],
+    },
     output: {
       filename: 'bundle.js',
       path: path.resolve(__dirname, 'dist'),

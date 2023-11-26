@@ -7,32 +7,34 @@
     <meta name="description" content="Tyler Lindberg's Personal Website" />
     <meta name="author" content="Tyler Lindberg" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- Preload woff2 font, accepting it will be a bit slower if we need .ttf -->
     <link
-      href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
-      rel="stylesheet"
+      rel="preload"
+      href="./assets/fonts/press-start-2p-v15-latin-regular.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
     />
+    <script>
+      // Adding this script seems to prevent a flash of unstyled content
+      let FF_FOUC_FIX;
+    </script>
   </head>
   <body>
+    <header>
+      <h1 id="name-title">Tyler Lindberg</h1>
+      <nav>
+        <a class="nav-anchor" href="https://www.linkedin.com/in/tylindberg/">
+          <h1 class="nav-text">LinkedIn</h1>
+        </a>
+        <a class="nav-anchor" href="https://github.com/TyLindberg">
+          <h1 class="nav-text">GitHub</h1>
+        </a>
+      </nav>
+    </header>
     <canvas id="main-canvas">
-      Your browser does not seem to support HTML5 canvas.
+      Your browser does not seem to support HTML5 canvas. This canvas displays a
+      rotating line rendering of the Stanford Bunny (optimized to be low-poly.)
     </canvas>
-    <h1 id="name-title">Tyler Lindberg</h1>
-    <div id="link-tray">
-      <a class="link" href="https://www.linkedin.com/in/tylindberg/">
-        <img
-          alt="LinkedIn"
-          class="link-icon"
-          src="./assets/icons/linkedin.svg"
-        />
-      </a>
-      <a class="link" href="https://github.com/TyLindberg">
-        <img alt="GitHub" class="link-icon" src="./assets/icons/github.svg" />
-      </a>
-      <a class="link" href="javascript:;">
-        <img alt="Resume" class="link-icon" src="./assets/icons/resume.svg" />
-      </a>
-    </div>
   </body>
 </html>
