@@ -10,7 +10,7 @@ if (!canvas || !(canvas instanceof HTMLCanvasElement)) {
   throw new Error('Failed to find HTML canvas!');
 }
 
-const camera = new PerspectiveCamera();
+const camera = new PerspectiveCamera([0, 0.2, 0]);
 const cameraController = new WebGLCameraController(camera, {
   phi: Math.PI / 2,
   theta: Math.PI / 2.5,

@@ -1,4 +1,4 @@
-import { mat4, ReadonlyMat4 } from 'gl-matrix';
+import { mat4, ReadonlyMat4, vec3 } from 'gl-matrix';
 import { Camera, SphericalCoordinates } from '../types';
 import { sphericalToCartesian } from '../utils/coordinateUtils';
 
@@ -7,6 +7,7 @@ export class PerspectiveCamera implements Camera {
   private projectionMatrix = mat4.create();
   private viewProjectionMatrix = mat4.create();
   private coordinates: SphericalCoordinates = { phi: 0, theta: 0, radius: 1 };
+  private _target;
   private _fov;
   private _aspect;
   private _near;
@@ -14,11 +15,30 @@ export class PerspectiveCamera implements Camera {
   private isViewMatrixDirty = true;
   private isProjectionMatrixDirty = true;
 
-  constructor(fov = 50, aspect = 1, near = 0.01, far = 100) {
+  constructor(
+    target: vec3 = [0, 0, 0],
+    fov = 50,
+    aspect = 1,
+    near = 0.01,
+    far = 100
+  ) {
+    this._target = target;
     this._fov = fov;
     this._aspect = aspect;
     this._near = near;
     this._far = far;
+  }
+
+  get target(): vec3 {
+    return this._target;
+  }
+
+  set target(newTarget: vec3) {
+    if (this._target === newTarget) {
+      return;
+    }
+    this.isViewMatrixDirty = true;
+    this._target = newTarget;
   }
 
   get fov(): number {
@@ -97,11 +117,11 @@ export class PerspectiveCamera implements Camera {
       mat4.lookAt(
         this.viewMatrix,
         [
-          cartesianCoordinates.x,
-          cartesianCoordinates.y,
-          cartesianCoordinates.z,
+          this._target[0] + cartesianCoordinates.x,
+          this._target[1] + cartesianCoordinates.y,
+          this._target[2] + cartesianCoordinates.z,
         ],
-        [0, 0, 0],
+        this._target,
         [0, 1, 0]
       );
       this.isViewMatrixDirty = false;
