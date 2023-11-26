@@ -10,8 +10,6 @@ interface ProgramInfo {
   uniformLocations: { [key: string]: WebGLUniformLocation };
 }
 
-// TODO: Handle device pixel ratio (turn off antialiasing potentially)
-
 export class WebGLContext implements GLContext<SimpleModel> {
   private gl: WebGLRenderingContext;
   private programInfo: ProgramInfo;
@@ -30,9 +28,17 @@ export class WebGLContext implements GLContext<SimpleModel> {
     this.canvas.height = this.canvas.clientHeight;
     this.initialCameraFov = camera.fov;
 
+    const webGLContextAttributes: WebGLContextAttributes = {
+      antialias: false,
+      depth: false,
+    };
+
     const gl = (this.gl =
-      canvas.getContext('webgl') ??
-      (canvas.getContext('experimental-webgl') as WebGLRenderingContext));
+      canvas.getContext('webgl', webGLContextAttributes) ??
+      (canvas.getContext(
+        'experimental-webgl',
+        webGLContextAttributes
+      ) as WebGLRenderingContext));
     if (!gl) {
       throw new Error('WEBGL_CONTEXT_INIT_FAILURE');
     }
@@ -76,9 +82,6 @@ export class WebGLContext implements GLContext<SimpleModel> {
   private glInit = (gl: WebGLRenderingContext) => {
     gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
-    gl.clearDepth(1.0);
-    gl.enable(gl.DEPTH_TEST);
-    gl.depthFunc(gl.LEQUAL);
     this.isSceneDirty = true;
   };
 
@@ -105,7 +108,7 @@ export class WebGLContext implements GLContext<SimpleModel> {
           );
         }
 
-        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+        gl.clear(gl.COLOR_BUFFER_BIT);
         if (this.count) {
           gl.drawArrays(gl.LINES, 0, this.count);
         }
@@ -161,9 +164,6 @@ export class WebGLContext implements GLContext<SimpleModel> {
     }
     gl.shaderSource(vertexShader, vertexShaderSource);
     gl.compileShader(vertexShader);
-    if (!gl.getShaderParameter(vertexShader, gl.COMPILE_STATUS)) {
-      console.error(gl.getShaderInfoLog(vertexShader));
-    }
 
     // Compile fragment shader
     const fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
@@ -172,9 +172,6 @@ export class WebGLContext implements GLContext<SimpleModel> {
     }
     gl.shaderSource(fragmentShader, fragmentShaderSource);
     gl.compileShader(fragmentShader);
-    if (!gl.getShaderParameter(fragmentShader, gl.COMPILE_STATUS)) {
-      console.error(gl.getShaderInfoLog(fragmentShader));
-    }
 
     const program = gl.createProgram();
     if (!program) {
@@ -191,8 +188,9 @@ export class WebGLContext implements GLContext<SimpleModel> {
     gl.deleteShader(fragmentShader);
 
     if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-      const linkErrLog = gl.getProgramInfoLog(program);
-      console.error(linkErrLog);
+      console.error(`Link failed: ${gl.getProgramInfoLog(program)}`);
+      console.error(`vs info-log: ${gl.getShaderInfoLog(vertexShader)}`);
+      console.error(`fs info-log: ${gl.getShaderInfoLog(fragmentShader)}`);
       throw new Error('Failed to link program');
     }
 
