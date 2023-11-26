@@ -3,6 +3,7 @@ import vertexShaderSource from './shaders/vert.glsl';
 import fragmentShaderSource from './shaders/frag.glsl';
 import { PerspectiveCamera } from './camera';
 import { mat4, ReadonlyMat4 } from 'gl-matrix';
+import { DEGREES_TO_RADIANS, RADIANS_TO_DEGREES } from '../utils/mathUtils';
 
 interface ProgramInfo {
   attributeLocations: { [key: string]: GLint };
@@ -17,6 +18,7 @@ export class WebGLContext implements GLContext<SimpleModel> {
   private renderLoopActive = false;
   private isSceneDirty = false; // TODO: Find a way to make this easier to track
   private previousViewProjectionMatrix: ReadonlyMat4 = mat4.create();
+  private initialCameraFov;
 
   private count: GLsizei = 0; // TODO: Remove this
 
@@ -26,6 +28,7 @@ export class WebGLContext implements GLContext<SimpleModel> {
   ) {
     this.canvas.width = this.canvas.clientWidth;
     this.canvas.height = this.canvas.clientHeight;
+    this.initialCameraFov = camera.fov;
     const gl = (this.gl =
       canvas.getContext('webgl') ??
       (canvas.getContext('experimental-webgl') as WebGLRenderingContext));
@@ -115,6 +118,14 @@ export class WebGLContext implements GLContext<SimpleModel> {
     canvas.height = canvas.clientHeight;
     gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
     this.camera.aspect = canvas.clientWidth / canvas.clientHeight;
+    if (this.camera.aspect < 1) {
+      // For mobile screens we need to adjust the FOV as well
+      // Equation referenced from here: https://gamedev.net/forums/topic/686950-what-makes-a-vertical-fov-from-a-horizontal-one/5334971/
+      // prettier-ignore
+      this.camera.fov = RADIANS_TO_DEGREES * (2 * Math.atan((1 / this.camera.aspect) * Math.tan(this.initialCameraFov * DEGREES_TO_RADIANS / 2)));
+    } else {
+      this.camera.fov = this.initialCameraFov;
+    }
     this.isSceneDirty = true;
   };
 
